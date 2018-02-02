@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.szxs.dao.BooksDao">
+<select id="queryBooksPager" resultType="Books">
+select * from (select rownum r,b.* from books b
+<where>
+    <if test="bookName!=null and bookName!=''">
+      and  b.bookname like CONCAT(CONCAT('%',#{bookName}),'%')
+    </if>
+    <if test="bookAuthor!=null and bookAuthor!=''">
+       and b.bookauthor like CONCAT(CONCAT('%',#{bookAuthor}),'%')
+    </if>
+    <if test="bookPublish!=null and bookPublish!=''">
+      and b.bookpublish like CONCAT(CONCAT('%',#{bookPublish}),'%')
+    </if>
+</where>)
+    i where i.r BETWEEN  #{nextPageStart} and #{nextPageEnd}
+</select>
+    <select id="queryRows" resultType="_int">
+        select count(*) from books
+        <where>
+            <if test="bookName!=null and bookName!=''">
+                bookname like CONCAT(CONCAT('%',#{bookName}),'%')
+            </if>
+            <if test="bookAuthor!=null and bookAuthor!=''">
+                and   bookauthor like CONCAT(CONCAT('%',#{bookAuthor}),'%')
+            </if>
+            <if test="bookPublish!=null and bookPublish!=''">
+                and   bookpublish like CONCAT(CONCAT('%',#{bookPublish}),'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="addBooks" >
+      insert into books values(seq_books_bookId.Nextval,#{bookName},#{bookAuthor},#{bookPublish},#{bookPage},#{bookPrice},#{createDate})
+    </insert>
+</mapper>
